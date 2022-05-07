@@ -1,25 +1,10 @@
-create TABLE executors(
-    id_executor SERIAL PRIMARY KEY, 
-    name VARCHAR(255),
-    surname VARCHAR(255),
-    telephone VARCHAR(255),
-    address VARCHAR(255),
-    lavel VARCHAR(255)
-);
-create TABLE clients(
-    id_client SERIAL PRIMARY KEY, 
-    name VARCHAR(255),
-    surname VARCHAR(255),
-    telephone VARCHAR(255),
-    address VARCHAR(255),
-    status VARCHAR(255)
-);
-create TABLE orders(
-    id_order SERIAL  PRIMARY KEY, 
-    order_comp VARCHAR(255),
-    order_status VARCHAR(255),
-    execurot_id INTEGER, 
-    FOREIGN KEY (execurot_id) REFERENCES executors (id_executor),
-    client_id INTEGER,
-FOREIGN KEY (client_id) REFERENCES clients (id_client)
-);
+CREATE OR REPLACE FUNCTION add_movie(title VARCHAR(70), production_year INTEGER) 
+ RETURNS void AS $$
+   DECLARE phonetic_code VARCHAR(70);
+ BEGIN
+   SELECT soundex(title) INTO phonetic_code;
+   RAISE NOTICE 'The phonetic code for % is %', title, phonetic_code;
+   INSERT INTO title (title, production_year, phonetic_code, kind_id) VALUES (title, production_year, phonetic_code, 1);
+   COMMIT;
+ END;
+ $$ LANGUAGE plpgsql;

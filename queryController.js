@@ -4,13 +4,25 @@ import fileService from './FileService.js'
 
 class Controller {
 
-
+    async getArticles(req, res) {
+        try {
+            const getArticles = await db.query('SELECT * FROM articles')
+            console.log(getArticles);
+            res.json(getArticles.rows)
+        } catch (error) {
+            res.status(500).send('Some wrong')
+            console.log(error);
+        }
+    }
 
     async createOrder(req, res) {
         const { order_comp, order_status, execurot_id, client_id } = req.body
         try {
             const fileNames = await fileService.saveFile(req.files.order_images);
-            const newOrder = await db.query('INSERT INTO orders (order_comp, order_status, execurot_id, client_id, order_images) values ($1, $2, $3, $4, $5) RETURNING *', [order_comp, order_status, execurot_id, client_id, JSON.stringify(fileNames)])
+            const newOrder = await db.query(
+                
+                'INSERT INTO orders (order_comp, order_status, execurot_id, client_id, order_images) values ($1, $2, $3, $4, $5) RETURNING *', [order_comp, order_status, execurot_id, client_id, JSON.stringify(fileNames)]
+                )
             res.status(200).json(newOrder.rows[0])
         } catch (error) {
             res.status(500).send(error)
@@ -25,12 +37,12 @@ class Controller {
         /* console.log(name)
         res.send(name) */
         try {
-            const getClients = await db.query('SELECT * FROM clients WHERE id_client = (SELECT id_executor FROM executors WHERE name = $1)', [name])
+            const getClients = await db.query('SELECT * FROM clients', )
             res.json(getClients.rows)
         } catch (error) {
+            res.status(500).send('Some wrong')
             console.log(error);
         }
-        /* res.json(getClient.rows[0]) */
     }
     async createClient(req, res) {
         const { name, surname, last_name, telephone, address, status } = req.body
